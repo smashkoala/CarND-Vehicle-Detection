@@ -18,12 +18,11 @@ from moviepy.editor import VideoFileClip
 def read_image_file_names():
     cars = glob.glob('./vehicles/*/*.png')
     notcars = glob.glob('./non-vehicles/*/*.png')
+    return cars, notcars
 
-    # Reduce the sample size because
-    # The quiz evaluator times out after 13s of CPU time
-    # sample_size = 500
-    # cars = cars[0:sample_size]
-    # notcars = notcars[0:sample_size]
+def read_image_file_names_report():
+    cars = glob.glob('./report_images/vehicles/*.png')
+    notcars = glob.glob('./report_images/non-vehicles/*.png')
     return cars, notcars
 
 # Train a classifier
@@ -170,10 +169,10 @@ def find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, ce
                 cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
                 hot_windows.append(((xbox_left, ytop_draw+ystart), (xbox_left+win_draw,ytop_draw+win_draw+ystart)))
             # else:
-            #     xbox_left = np.int(xleft*scale)
-            #     ytop_draw = np.int(ytop*scale)
-            #     win_draw = np.int(window*scale)
-            #     cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
+            # xbox_left = np.int(xleft*scale)
+            # ytop_draw = np.int(ytop*scale)
+            # win_draw = np.int(window*scale)
+            # cv2.rectangle(draw_img,(xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart),(0,0,255),6)
 
     # plt.imshow(draw_img)
     # plt.xlim(0, 1280)
@@ -203,7 +202,29 @@ def heat_mapping(img, box_list):
     heat = apply_threshold(heat, 1)
     heatmap = np.clip(heat, 0, 255)
 
+    # fig2 = plt.figure()
+    # layout = 121
+    # plt.subplot(layout)
+    # title = "original.jpg"
+    # plt.imshow(img)
+    # plt.title(title, fontsize= 8)
+    # plt.xticks(fontsize=8)
+    # plt.yticks(fontsize=8)
+    # layout = 122
+    # plt.subplot(layout)
+    # title = "heatmap.jpg"
+    # plt.imshow(heatmap, cmap="gray")
+    # plt.title(title, fontsize= 8)
+    # plt.xticks(fontsize=8)
+    # plt.yticks(fontsize=8)
+    # save_file_name = "./output_images/examples2.jpg"
+    # fig2.tight_layout()
+    # plt.savefig(save_file_name)
+
     labels = label(heatmap)
+    # fig3 = plt.figure()
+    # plt.imshow(labels[0], cmap="gray")
+    # plt.savefig("./output_images/example3.jpg")
     return labels
 
 def draw_labeled_bboxes(img, labels):
@@ -231,8 +252,12 @@ def pipe_line(img):
         boxes = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
         box_lists = box_lists + boxes
     labels = heat_mapping(img, box_lists)
-    draw_img = draw_labeled_bboxes(np.copy(img), labels)
-    return draw_img
+    img = draw_labeled_bboxes(np.copy(img), labels)
+    #Only for reporting##
+    # for box in box_lists:
+    #     cv2.rectangle(img, box[0], box[1], (0,0,255), 6)
+    #####################
+    return img
 
 
 #Main processing
@@ -250,23 +275,42 @@ ystart = 400
 ystop = 780
 #y_start_stop = [400, 780] # Min and max in y to search in slide_window()
 
-# cars, non_cars = read_image_file_names()
-# svc, X_scaler = train_classifier(cars, non_cars, color_space, orient, pix_per_cell, cell_per_block, hog_channel, spatial_size, hist_bins, spatial_feat, hist_feat, hog_feat)
+#cars, non_cars = read_image_file_names()
+#cars, non_cars = read_image_file_names_report()
+#svc, X_scaler = train_classifier(cars, non_cars, color_space, orient, pix_per_cell, cell_per_block, hog_channel, spatial_size, hist_bins, spatial_feat, hist_feat, hog_feat)
 # pickle.dump(svc, open('svc.p', 'wb'))
 # pickle.dump(X_scaler, open('X_scaler.p', 'wb'))
 
 svc = pickle.load(open('svc.p', 'rb'))
 X_scaler = pickle.load(open('X_scaler.p', 'rb'))
 
-# image = mpimg.imread("./test_images/test5.jpg")
-# draw_image = pipe_line(image)
-# plt.imshow(draw_image)
-# plt.xlim(0, 1280)
-# plt.ylim(720, 0)
-# plt.show()
-# plt.savefig('lane_fit.jpg')
+fig = plt.figure()
+file_name = "./test_images/test6.jpg"
+image = mpimg.imread(file_name)
+draw_image = pipe_line(image)
+plt.imshow(draw_image)
+plt.savefig("./output_images/example4.jpg")
 
-output = 'output.mp4'
-clip1 = VideoFileClip("project_video.mp4")
-clip = clip1.fl_image(pipe_line)
-clip.write_videofile(output, audio=False)
+# fig = plt.figure()
+# for i in range(1,7):
+#     file_name = "./test_images/test" + str(i) + ".jpg"
+#     image = mpimg.imread(file_name)
+#     draw_image = pipe_line(image)
+#     layout = 320 + i
+#     plt.subplot(layout)
+#     title = "test"+str(i)+".jpg"
+#     print(title)
+#     plt.imshow(draw_image)
+#     plt.title(title, fontsize= 8)
+#     plt.xticks(fontsize=8)
+#     plt.yticks(fontsize=8)
+#     # plt.show()
+# name, ext = os.path.splitext(os.path.basename(file_name))
+# save_file = "./output_images/examples.jpg"
+# fig.tight_layout()
+# plt.savefig(save_file)
+
+# output = 'output.mp4'
+# clip1 = VideoFileClip("project_video.mp4")
+# clip = clip1.fl_image(pipe_line)
+# clip.write_videofile(output, audio=False)

@@ -2,6 +2,10 @@ import matplotlib.image as mpimg
 import numpy as np
 import cv2
 from skimage.feature import hog
+import matplotlib.pyplot as plt
+import os
+
+DEBUG = False
 
 def convert_color(img, conv='RGB2YCrCb'):
     if conv == 'RGB2YCrCb':
@@ -86,13 +90,41 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
             file_features.append(hist_features)
         if hog_feat == True:
         # Call get_hog_features() with vis=False, feature_vec=True
+            if DEBUG:
+                fig = plt.figure()
+                plt.subplot(141)
+                plt.imshow(image)
+                plt.title('Original image', fontsize= 8)
+                fig.tight_layout()
+                #path, ext = os.path.splitext(file)
+                #save_file = path + ".jpg"
+                #plt.savefig(save_file)
             if hog_channel == 'ALL':
                 hog_features = []
+                ch = 0
                 for channel in range(feature_image.shape[2]):
-                    hog_features.append(get_hog_features(feature_image[:,:,channel],
+                    feature, hog_image = get_hog_features(feature_image[:,:,channel],
                                         orient, pix_per_cell, cell_per_block,
-                                        vis=False, feature_vec=True))
+                                        vis=True, feature_vec=True)
+                    hog_features.append(feature)
+                    #The following line is to generate images for repor
+                    if DEBUG:
+                        #fig = plt.figure()
+                        layout = 142 + ch
+                        plt.subplot(layout)
+                        plt.imshow(hog_image, cmap="gray")
+                        title = "Hog image ch"+str(ch+1)
+                        plt.title(title, fontsize= 8)
+                        fig.tight_layout()
+                        # path, ext = os.path.splitext(file)
+                        # save_file = path+"_hog"+str(ch)+".jpg"
+                        # plt.savefig(save_file)
+                        ch += 1
                 hog_features = np.ravel(hog_features)
+                if DEBUG:
+                    path, ext = os.path.splitext(file)
+                    save_file = path+"_hog"+".jpg"
+                    plt.savefig(save_file)
             else:
                 hog_features = get_hog_features(feature_image[:,:,hog_channel], orient,
                             pix_per_cell, cell_per_block, vis=False, feature_vec=True)
