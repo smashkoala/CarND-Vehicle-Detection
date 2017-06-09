@@ -66,7 +66,7 @@ It is in the code line 29 through 73. (`train_classifier()` in `main_process.py`
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
 I implemented the sliding window search in the code line 106 through 181. (`find_cars()` in `main_process.py`)
-I decided to search the image area whose Y coordinate is between 400 px and 780 px by checking the positions of the road manually by an image processing tool. The cell per step of sliding window is two. The cell per block is two. I used two size of sliding window. One is 64 pix x 64 pix. The other one is 96 pix x 96 pix. I decided these parameters by experimenting the pipeline many times with test images.
+I decided to search the image area whose Y coordinate is between 400 px and 780 px by checking the positions of the road manually by image processing tool. The cell per step of sliding window is two. The cell per block is two. I used two sizes of sliding window. One is 64 pix x 64 pix. The other one is 96 pix x 96 pix. I decided these parameters by experimenting the pipeline many times with test images.
 
 64 pix x 64 pix (One cell is 8 pix. Sliding 2 cells(16 pix))
 ![alt text][image3-1]
@@ -84,7 +84,7 @@ Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spat
 ### Video Implementation
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)  
-Here's a [link to my video result](./CarDetect_Lane.mp4)
+Here's a [link to my video result](./CarDetect_Lane.mp4).  
 I combined the car detection with the advanced lane detection from the project #4.
 
 
