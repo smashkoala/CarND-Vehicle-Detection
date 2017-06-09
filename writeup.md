@@ -36,7 +36,7 @@ You're reading it!
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in lines 59 through 135 `extract_features()` in `lesson_functins.py`.
+The code for this step is contained in lines 59 through 135. (`extract_features()` in `lesson_functins.py`.)
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
@@ -61,12 +61,13 @@ In the end, I just found the combination above gave the training accuracy 99.7 %
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM using HOG features of three channels, color features of three channels and spatial features. For spatial features, I used 16 x 16 pixel binning dimensions.
-It is in the code line 32 through 73 `train_classifier()` in `main_process.py`
+It is in the code line 32 through 73. (`train_classifier()` in `main_process.py`)
 
 ###Sliding Window Search
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
+I implemented the sliding window search in the code line 106 through 181. (`find_cars()` in `main_process.py`)
 I decided to search the image area whose Y coordinate is between 400 px and 780 px by checking the positions of the road manually by an image processing tool. The cell per step of sliding window is two. The cell per block is two. I used two size of sliding window. One is 64 pix x 64 pix. The other one is 96 pix x 96 pix. I decided these parameters by experimenting the pipeline many times with test images.
 
 64 pix x 64 pix (One cell is 8 pix. Sliding 2 cells(16 pix))
@@ -111,4 +112,4 @@ Here's an example result showing the heatmap from a frame of video, the result o
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Since I did not track the heat map position between frames, the detection windows on the image was a little bit shaky. By implementing the heat map tracking, the detection windows could have moved more smoothly.
+Since I did not track the heat map positions across multiple frames, the detection windows on the image were a little bit shaky. By implementing the heat map tracking across multiple frames, the detection windows could have moved more smoothly.
