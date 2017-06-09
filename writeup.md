@@ -36,7 +36,7 @@ You're reading it!
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in lines 55 through 103 `extract_features()` in `less_functins.py`.
+The code for this step is contained in lines 59 through 135 `extract_features()` in `lesson_functins.py`.
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
@@ -61,12 +61,13 @@ In the end, I just found the combination above gave the training accuracy 99.7 %
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM using HOG features of three channels, color features of three channels and spatial features. For spatial features, I used 16 x 16 pixel binning dimensions.
+It is in the code line 32 through 73 `train_classifier()` in `main_process.py`
 
 ###Sliding Window Search
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search the image area whose Y coordinate is between 400 px and 780 px. The cell per step of sliding window is two. The cell per block is two. I used two size of sliding window. One is 64 pix x 64 pix. The other one is 96 pix x 96 pix.
+I decided to search the image area whose Y coordinate is between 400 px and 780 px by checking the positions of the road manually by an image processing tool. The cell per step of sliding window is two. The cell per block is two. I used two size of sliding window. One is 64 pix x 64 pix. The other one is 96 pix x 96 pix. I decided these parameters by experimenting the pipeline many times with test images.
 
 64 pix x 64 pix (One cell is 8 pix. Sliding 2 cells(16 pix))
 ![alt text][image3-1]
@@ -84,7 +85,7 @@ Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spat
 ### Video Implementation
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)  
-Here's a [link to my video result](./CarDetect_Lane.mp4)  
+Here's a [link to my video result](./CarDetect_Lane.mp4)
 I combined the car detection with the advanced lane detection from the project #4.
 
 
@@ -94,7 +95,7 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 
 Here's an example result showing the heatmap from a frame of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes overlaid on the output of `scipy.ndimage.measurements.label()`:
 
-### Here is a frame and their corresponding heatmaps:
+### Here is a frame and its corresponding heatmaps:
 
 ![alt text][image5]
 
@@ -104,12 +105,10 @@ Here's an example result showing the heatmap from a frame of video, the result o
 ### Here the resulting bounding boxes are drawn onto the last frame in the series:
 ![alt text][image7]
 
-
-
 ---
 
 ###Discussion
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Since I did not track the heat map position between frames, the detection windows on the image was a little bit shaky. By implementing the heat map tracking, the detection windows could have moved more smoothly.
