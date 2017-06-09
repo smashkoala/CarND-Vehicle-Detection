@@ -202,6 +202,7 @@ def heat_mapping(img, box_list):
     heat = apply_threshold(heat, 1)
     heatmap = np.clip(heat, 0, 255)
 
+    # To produce images for writeup report
     # fig2 = plt.figure()
     # layout = 121
     # plt.subplot(layout)
@@ -259,8 +260,51 @@ def pipe_line(img):
     #####################
     return img
 
+#For car detection with video clip
+def video_processing():
+    output = 'output.mp4'
+    clip1 = VideoFileClip("project_video.mp4")
+    clip = clip1.fl_image(pipe_line)
+    clip.write_videofile(output, audio=False)
 
-#Main processing
+#For classfier training
+def train_classifier_main():
+    cars, non_cars = read_image_file_names()
+    cars, non_cars = read_image_file_names_report()
+    svc, X_scaler = train_classifier(cars, non_cars, color_space, orient, pix_per_cell, cell_per_block, hog_channel, spatial_size, hist_bins, spatial_feat, hist_feat, hog_feat)
+    pickle.dump(svc, open('svc.p', 'wb'))
+    pickle.dump(X_scaler, open('X_scaler.p', 'wb'))
+
+#For producing images for writeup report
+def produce_example4_img():
+    fig = plt.figure()
+    file_name = "./test_images/test6.jpg"
+    image = mpimg.imread(file_name)
+    draw_image = pipe_line(image)
+    plt.imshow(draw_image)
+    plt.savefig("./output_images/example4.jpg")
+
+def produce_examples_img():
+    fig = plt.figure()
+    for i in range(1,7):
+        file_name = "./test_images/test" + str(i) + ".jpg"
+        image = mpimg.imread(file_name)
+        draw_image = pipe_line(image)
+        layout = 320 + i
+        plt.subplot(layout)
+        title = "test"+str(i)+".jpg"
+        print(title)
+        plt.imshow(draw_image)
+        plt.title(title, fontsize= 8)
+        plt.xticks(fontsize=8)
+        plt.yticks(fontsize=8)
+        # plt.show()
+    name, ext = os.path.splitext(os.path.basename(file_name))
+    save_file = "./output_images/examples.jpg"
+    fig.tight_layout()
+    plt.savefig(save_file)
+
+#Main process
 color_space = 'YCrCb' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 orient = 9  # HOG orientations
 pix_per_cell = 8 # HOG pixels per cell
@@ -273,44 +317,7 @@ hist_feat = True # Histogram features on or off
 hog_feat = True # HOG features on or off
 ystart = 400
 ystop = 780
-#y_start_stop = [400, 780] # Min and max in y to search in slide_window()
-
-#cars, non_cars = read_image_file_names()
-#cars, non_cars = read_image_file_names_report()
-#svc, X_scaler = train_classifier(cars, non_cars, color_space, orient, pix_per_cell, cell_per_block, hog_channel, spatial_size, hist_bins, spatial_feat, hist_feat, hog_feat)
-# pickle.dump(svc, open('svc.p', 'wb'))
-# pickle.dump(X_scaler, open('X_scaler.p', 'wb'))
 
 svc = pickle.load(open('svc.p', 'rb'))
 X_scaler = pickle.load(open('X_scaler.p', 'rb'))
-
-fig = plt.figure()
-file_name = "./test_images/test6.jpg"
-image = mpimg.imread(file_name)
-draw_image = pipe_line(image)
-plt.imshow(draw_image)
-plt.savefig("./output_images/example4.jpg")
-
-# fig = plt.figure()
-# for i in range(1,7):
-#     file_name = "./test_images/test" + str(i) + ".jpg"
-#     image = mpimg.imread(file_name)
-#     draw_image = pipe_line(image)
-#     layout = 320 + i
-#     plt.subplot(layout)
-#     title = "test"+str(i)+".jpg"
-#     print(title)
-#     plt.imshow(draw_image)
-#     plt.title(title, fontsize= 8)
-#     plt.xticks(fontsize=8)
-#     plt.yticks(fontsize=8)
-#     # plt.show()
-# name, ext = os.path.splitext(os.path.basename(file_name))
-# save_file = "./output_images/examples.jpg"
-# fig.tight_layout()
-# plt.savefig(save_file)
-
-# output = 'output.mp4'
-# clip1 = VideoFileClip("project_video.mp4")
-# clip = clip1.fl_image(pipe_line)
-# clip.write_videofile(output, audio=False)
+video_processing()

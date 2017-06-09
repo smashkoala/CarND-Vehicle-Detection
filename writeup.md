@@ -35,7 +35,7 @@ The goals / steps of this project are the following:
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in lines 59 through 135. (`extract_features()` in `lesson_functins.py`.)
+The code for this step is contained in lines 59 through 135. (`extract_features()` in `lesson_functions.py`.)
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
@@ -51,7 +51,6 @@ Vehicle image example
 Non-vehicle image example  
 ![alt text][image2-2]
 
-
 ####2. Explain how you settled on your final choice of HOG parameters.
 
 I tried various combinations of parameters such as orientations, pixcels_per_cell and cells_per_block.
@@ -60,7 +59,7 @@ In the end, I just found the combination above gave the training accuracy 99.7 %
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 I trained a linear SVM using HOG features of three channels, color features of three channels and spatial features. For spatial features, I used 16 x 16 pixel binning dimensions.
-It is in the code line 32 through 73. (`train_classifier()` in `main_process.py`)
+It is in the code line 29 through 73. (`train_classifier()` in `main_process.py`)
 
 ###Sliding Window Search
 
@@ -91,7 +90,8 @@ I combined the car detection with the advanced lane detection from the project #
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.
+It is implemented in code line 183 through 244, (`draw_labeled_bboxes()`, `heat_mapping()`, `apply_threshold()` and `add_heat()` in `main_process.py`)
 
 Here's an example result showing the heatmap from a frame of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes overlaid on the output of `scipy.ndimage.measurements.label()`:
 
